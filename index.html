@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Store - Toko Makanan Lengkap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .page {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .product-card {
+            transition: transform 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 25px;
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            border: none;
+            border-radius: 25px;
+        }
+        .btn-danger {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            border: none;
+            border-radius: 25px;
+        }
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .admin-panel {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .hidden { display: none; }
+        .cart-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#" onclick="showPage('home')">🍔 Food Store</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#" onclick="showPage('products')">Produk</a>
+                <a class="nav-link" href="#" onclick="showPage('cart')">Keranjang (<span id="cart-count">0</span>)</a>
+                <a class="nav-link" href="#" id="login-link">Login</a>
+                <a class="nav-link hidden" href="#" onclick="showPage('admin')" id="admin-link">Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+                <div id="home" class="page">
+            <h1 class="text-center mb-4">Selamat Datang di Food Store</h1>
+            <p class="text-center">Nikmati pengalaman berbelanja makanan online dengan fitur lengkap: katalog interaktif, keranjang cerdas, checkout mudah, dan panel admin.</p>
+            <h3 class="mt-5">Produk Unggulan</h3>
+            <div class="row" id="featured-products"></div>
+        </div>
+
+                <div id="products" class="page hidden">
+            <h2>Katalog Produk</h2>
+            <div class="row" id="all-products"></div>
+        </div>
+
+                <div id="cart" class="page hidden">
+            <h2>Keranjang Belanja</h2>
+            <div id="cart-items"></div>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <h4>Total: $<span id="cart-total">0</span></h4>
+                <button class="btn btn-success" onclick="showPage('checkout')">Checkout</button>
+            </div>
+        </div>
+
+                <div id="checkout" class="page hidden">
+            <h2>Checkout</h2>
+            <form id="checkout-form" class="login-form">
+                <div class="mb-3">
+                    <label class="form-label">Nama Lengkap</label>
+                    <input type="text" class="form-control" id="checkout-name" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Alamat Pengiriman</label>
+                    <input type="text" class="form-control" id="checkout-address" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nomor Telepon</label>
+                    <input type="tel" class="form-control" id="checkout-phone" required>
+                </div>
+                <p class="fw-bold">Total Pembayaran: $<span id="checkout-total">0</span></p>
+                <button type="submit" class="btn btn-primary w-100">Bayar Sekarang</button>
+            </form>
+        </div>
+
+                <div id="login" class="page hidden">
+            <h2 class="text-center mb-4">Masuk ke Akun Anda</h2>
+            <form id="login-form" class="login-form">
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="login-email" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="login-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-3">Masuk</button>
+            </form>
+            <div class="text-center mb-3">atau</div>
+            
+                        <div id="g_id_onload"
+                data-client_id="REPLACE_DENGAN_GOOGLE_CLIENT_ID_ANDA" 
+                data-context="signin"
+                data-ux_mode="popup"
+                data-callback="handleCredentialResponse"
+                data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                data-type="standard"
+                data-shape="rectangular"
+                data-theme="outline"
+                data-text="signin_with"
+                data-size="large"
+                data-logo_alignment="left">
+            </div>
+            
+            <p class="text-center mt-3 small">Admin: email=admin@foodstore.com, password=admin123</p>
+            <p class="text-center small">Pengguna Biasa (Rotiiiaokaaa): email=${'rotiiiaokaaa@gmail.com'}, password=user123</p>
+        </div>
+
+                <div id="admin" class="page hidden admin-panel">
+            <h2>Admin Panel - Kelola Produk</h2>
+            <form id="add-product-form">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nama Produk</label>
+                        <input type="text" class="form-control" id="product-name" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Harga</label>
+                        <input type="number" class="form-control" id="product-price" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea class="form-control" id="product-desc" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Kategori</label>
+                    <input type="text" class="form-control" id="product-category" required>
+                </div>
+                <button type="submit" class="btn btn-light w-100">Tambah Produk</button>
+            </form>
+            <h3 class="mt-4">Daftar Produk</h3>
+            <div id="admin-products"></div>
+        </div>
+    </div>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        // Data produk (simulasi database)
+        let products = JSON.parse(localStorage.getItem('products')) || [
+            { id: 1, name: 'Nasi Goreng', price: 15, desc: 'Nasi goreng spesial dengan telur dan ayam', category: 'Makanan Utama', image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=150' },
+            { id: 2, name: 'Ayam Bakar', price: 20, desc: 'Ayam bakar manis dengan bumbu rempah', category: 'Makanan Utama', image: 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=150' },
+            { id: 3, name: 'Es Teh', price: 5, desc: 'Teh dingin segar dengan lemon', category: 'Minuman', image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=150' },
+            { id: 4, name: 'Bakso', price: 12, desc: 'Bakso daging sapi kuah panas', category: 'Makanan Utama', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=150' }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        let isAdmin = localStorage.getItem('isAdmin') === 'true';
+        let userEmail = localStorage.getItem('userEmail') || '';
+
+        // Fungsi untuk menampilkan halaman
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+            if (pageId === 'cart') updateCart();
+            if (pageId === 'checkout') updateCheckout();
+            if (pageId === 'admin') updateAdmin();
+        }
+
+        // Render produk
+        function renderProducts(containerId, productList) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            productList.forEach(p => {
+                container.innerHTML += `
+                    <div class="col-md-3 product-card">
+                        <div class="card h-100">
+                            <img src="${p.image}" class="card-img-top" alt="${p.name}" style="height: 200px; object-fit: cover;">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${p.name}</h5>
+                                <p class="card-text">${p.desc}</p>
+                                <p class="card-text fw-bold text-primary">$${p.price}</p>
+                                <button class="btn btn-primary mt-auto" onclick="addToCart(${p.id})">Tambah ke Keranjang</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Tambah ke keranjang
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            cart.push(product);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            alert(`"${product.name}" ditambahkan ke keranjang!`);
+        }
+
+        // Update jumlah keranjang
+        function updateCartCount() {
+            document.getElementById('cart-count').textContent = cart.length;
+        }
+
+        // Update keranjang
+        function updateCart() {
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, index) => {
+                total += item.price;
+                container.innerHTML += `
+                    <div class="cart-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${item.name}</strong> - $${item.price}
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="removeFromCart(${index})">Hapus</button>
+                    </div>
+                `;
+            });
+            document.getElementById('cart-total').textContent = total;
+        }
+
+        // Hapus dari keranjang
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCart();
+            updateCartCount();
+        }
+
+        // Update checkout
+        function updateCheckout() {
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('checkout-total').textContent = total;
+        }
+
+        // Update admin
+        function updateAdmin() {
+            if (!isAdmin) {
+                showPage('home'); // Redirect jika bukan admin
+                return;
+            }
+            const container = document.getElementById('admin-products');
+            container.innerHTML = '';
+            products.forEach(p => {
+                container.innerHTML += `<div class="d-flex justify-content-between align-items-center mb-2"><span>${p.name} - $${p.price}</span><button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Hapus</button></div>`;
+            });
+        }
+
+        // Hapus produk (admin)
+        function deleteProduct(id) {
+            if (!isAdmin) return alert('Akses ditolak!');
+            products = products.filter(p => p.id !== id);
+            localStorage.setItem('products', JSON.stringify(products));
+            updateAdmin();
+            renderProducts('all-products', products);
+            renderProducts('featured-products', products.slice(0, 4));
+        }
+
+        // --- FUNGSI BARU UNTUK LOGIN (DARI GOOGLE ATAU FORM) ---
+        function login(email, isAdminUser) {
+            isLoggedIn = true;
+            isAdmin = isAdminUser;
+            userEmail = email;
+            
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('isAdmin', isAdminUser ? 'true' : 'false');
+            localStorage.setItem('userEmail', email);
+
+            document.getElementById('admin-link').classList[isAdminUser ? 'remove' : 'add']('hidden');
+            document.getElementById('login-link').textContent = 'Logout';
+            alert(`Login berhasil sebagai ${isAdminUser ? 'Admin' : 'Pengguna Biasa'} (${email})!`);
+            showPage('home');
+        }
+
+        // --- FUNGSI CALLBACK GOOGLE SIGN-IN ---
+        // Dipanggil otomatis oleh Google Identity Services
+        window.handleCredentialResponse = (response) => {
+            if (response.credential) {
+                // Mendapatkan token JWT
+                const token = response.credential;
+                // Dekode payload untuk mendapatkan email (basis 64)
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const email = payload.email;
+
+                // Cek hak akses: admin atau pengguna biasa
+                const isAdminUser = (email === 'admin@foodstore.com');
+                login(email, isAdminUser);
+            }
+        }
+        // --- AKHIR FUNGSI GOOGLE SIGN-IN ---
+
+        // Event listeners
+        document.getElementById('checkout-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Pembayaran berhasil! Terima kasih atas pesanannya.');
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            showPage('home');
+        });
+
+        // Event listener untuk tombol Login form
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (email === 'admin@foodstore.com' && password === 'admin123') {
+                login(email, true);
+            } else if (email === 'rotiiiaokaaa@gmail.com' && password === 'user123') { // Akun Anda
+                login(email, false);
+            } else {
+                alert('Email atau password salah!');
+            }
+        });
+
+        // Event listener untuk tombol Login/Logout di Navbar
+        document.getElementById('login-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (isLoggedIn) {
+                // Logout logic
+                isLoggedIn = false;
+                isAdmin = false;
+                userEmail = '';
+                localStorage.clear(); // Hapus semua state login/keranjang
+
+                document.getElementById('admin-link').classList.add('hidden');
+                document.getElementById('login-link').textContent = 'Login';
+                alert('Logout berhasil!');
+                showPage('home');
+            } else {
+                showPage('login');
+            }
+        });
+
+
+        document.getElementById('add-product-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!isAdmin) return alert('Akses ditolak!');
+            const newProduct = {
+                id: Date.now(),
+                name: document.getElementById('product-name').value,
+                price: parseFloat(document.getElementById('product-price').value),
+                desc: document.getElementById('product-desc').value,
+                category: document.getElementById('product-category').value,
+                image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=150'
+            };
+            products.push(newProduct);
+            localStorage.setItem('products', JSON.stringify(products));
+            updateAdmin();
+            renderProducts('all-products', products);
+            renderProducts('featured-products', products.slice(0, 4));
+            alert('Produk ditambahkan!');
+        });
+
+        // Inisialisasi
+        window.onload = () => {
+            renderProducts('featured-products', products.slice(0, 4));
+            renderProducts('all-products', products);
+            updateCartCount();
+            
+            // Inisialisasi tampilan navbar
+            if (isLoggedIn) {
+                document.getElementById('login-link').textContent = 'Logout';
+                if (isAdmin) {
+                    document.getElementById('admin-link').classList.remove('hidden');
+                }
+            }
+            showPage('home');
+        };
+    </script>
+</body>
+</html>
